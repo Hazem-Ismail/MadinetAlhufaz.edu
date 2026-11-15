@@ -13,11 +13,13 @@
  function keys(e){if(e.key==='Escape'){e.preventDefault();finish()}if(e.key==='Tab'){e.preventDefault();skip.focus()}}
  skip.onclick=finish;document.addEventListener('keydown',keys);reduce.addEventListener?.('change',finish);timer=setTimeout(finish,4600);window.addEventListener('pagehide',finish,{once:true});
  }
- // The intro belongs to entering the site, never to an internal page change.
+ // Play on site entry or a homepage refresh, never on internal page navigation.
  const navigation=window.performance?.getEntriesByType?.('navigation')?.[0]?.type||'navigate';
  let internal=false;try{internal=!!document.referrer&&new URL(document.referrer).origin===location.origin;}catch{}
  let started=false;try{started=sessionStorage.getItem('mh-visit-started')==='1';sessionStorage.setItem('mh-visit-started','1');}catch{started=navigation==='reload';}
- if(navigation!=='back_forward'&&!internal&&!started)showIntro();
+ const homepageReload=navigation==='reload'&&document.body.dataset.page==='index';
+ const siteEntry=navigation==='navigate'&&!internal&&!started;
+ if(homepageReload||siteEntry)showIntro();
  // Browser history restores the existing page without reopening the overlay.
 
 })();
